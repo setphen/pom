@@ -123,13 +123,13 @@
 
   <div class="button-container">
     <button class="start-button" on:click={startOrStop}>
-      <svg width="28" height="30" viewBox="0 0 28 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g class:visible={running}>
-        <path d="M0 0H9V30H0V0Z"/>
-        <path d="M19 0H28V30H19V0Z"/>
-        </g>
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g class:visible={!running}>
-        <path d="M27 15L2 30L2 0L27 15Z"/>
+        <path d="M30 15L5 30L5 0L30 15Z" />
+        </g>
+        <g class:visible={running}>
+        <path d="M1 0H10V30H1V0Z" />
+        <path d="M20 0H29V30H20V0Z" />
         </g>
       </svg>
     </button>
@@ -184,6 +184,12 @@
     font-family: "Fira Code", monospace;
     font-size: 2rem;
     font-weight: 300;
+    user-select: none;
+  }
+
+  .start-button,
+  .reset-button {
+    overflow: hidden;
   }
 
   .start-button {
@@ -208,10 +214,6 @@
     margin-top: 2rem;
   }
 
-  .start-button:active {
-    background: #FAB564;
-  }
-
   .start-button g {
     visibility: hidden;
     fill: var(--bg);
@@ -222,9 +224,8 @@
     fill: var(--bg);
   }
 
-  .reset-button:focus,
-  .start-button:focus {
-    box-shadow: 0 0 20px 4px white;
+  button:focus {
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--action);
     outline: 0;
   }
 
@@ -243,10 +244,6 @@
     position: absolute;
     left: 3rem;
     top: -2rem;
-  }
-
-  .reset-button:hover {
-    background: #FAB564;
   }
 
   .clock-path {
@@ -283,5 +280,11 @@
   .toggle .active {
     background-color: var(--action);
     color: var(--bg);
+  }
+
+  .toggle:hover .active,
+  .start-button:hover,
+  .reset-button:hover {
+    background-color: var(--hover);
   }
 </style>

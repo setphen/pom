@@ -1,9 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&family=Fira+Sans:wght@500&display=swap');
 
+/* :root { */
+/*   --bg: #FEFFE4; */
+/*   --accent: #CDE87F; */
+/*   --action: #5F7E05; */
+/*   --hover: #486101; */
+/* } */
+
 :root {
-  --bg: #FEFFE4;
-  --accent: #CDE87F;
-  --action: #5F7E05;
+  --bg: #1A1F23;
+  --accent: #464E59;
+  --action: #F0BC37;
+  --hover: #D79D09;
 }
 
 * {
