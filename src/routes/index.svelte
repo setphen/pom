@@ -24,11 +24,13 @@
 
   $: if (timeRemaining <= 0 && running == true) {
     console.log("DONE")
-
-    //Switch to break/pom
-    onBreak = !onBreak
     reset()
     serialize()
+  }
+
+  function toggleBreak() {
+    onBreak = !onBreak
+    reset()
   }
 
   function reset(e) {
@@ -77,7 +79,7 @@
   function millisToMinutesAndSeconds(millis) {
     let ms = Math.ceil(millis/1000) * 1000 // round up
     let d = new Date(ms)
-    let minutes = d.getUTCMinutes()
+    let minutes = (d.getUTCMinutes() < 10 ? "0" : "") + d.getUTCMinutes()
     let seconds = (d.getUTCSeconds() < 10 ? "0" : "") + d.getUTCSeconds()
     return minutes + ':' + seconds
   }
@@ -98,76 +100,62 @@
 </script>
 
 <main>
-  <button class="start-button" on:click={startOrStop}>
-    <span>
-      {running ? "Pause" : "Start"} {onBreak ? "Break" : "Pom"}
-    </span>
+  <button class="toggle" on:click={toggleBreak}>
+    <span class="toggle__pom" class:active={!onBreak}>Pom</span>
+    <span class="toggle__break" class:active={onBreak}>Break</span>
+  </button>
 
+  <div class="clock">
     <span class="time">
       {millisToMinutesAndSeconds(timeRemaining)}
     </span>
-  </button>
+    <svg viewbox="0,0,200,200">
+      <circle class="clock-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=4
+      transform="rotate(-90 100 100)" stroke-dasharray="616"
+                                      stroke-dashoffset="{616-616 *
+                                      (timeRemaining/currentTotalDuration)}"></circle>
+      <circle class="timer-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=4
+      transform="rotate(-90 100 100)" stroke-dasharray="616"
+                                      stroke-dashoffset="{-616 *
+                                      (timeRemaining/currentTotalDuration)}"></circle>
+    </svg>
+  </div>
 
+  <div class="button-container">
+    <button class="start-button" on:click={startOrStop}>
+      <svg width="28" height="30" viewBox="0 0 28 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g class:visible={running}>
+        <path d="M0 0H9V30H0V0Z"/>
+        <path d="M19 0H28V30H19V0Z"/>
+        </g>
+        <g class:visible={!running}>
+        <path d="M27 15L2 30L2 0L27 15Z"/>
+        </g>
+      </svg>
+    </button>
 
-  <svg viewbox="0,0,200,200">
-    <circle class="clock-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=2
-    transform="rotate(-90 100 100)" stroke-dasharray="616"
-                                    stroke-dashoffset="{616-616 *
-                                    (timeRemaining/currentTotalDuration)}"></circle>
-    <circle class="timer-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=2
-    transform="rotate(-90 100 100)" stroke-dasharray="616"
-                                    stroke-dashoffset="{-616 *
-                                    (timeRemaining/currentTotalDuration)}"></circle>
-  </svg>
-  <button class="reset-button" on:click={() => {onBreak = false; reset();}}>Reset</button>
-  <!--
-  <table>
-    <tr>
-      <th>running</th>
-      <td>{running}</td>
-    </tr>
-    <tr>
-      <th>duration</th>
-      <td>{duration}</td>
-    </tr>
-    <tr>
-      <th>remaining ms</th>
-      <td>{timeRemaining}</td>
-    </tr>
-    <tr>
-      <th>elapsed</th>
-      <td>{elapsed}</td>
-    </tr>
-    <tr>
-      <th>timestamp</th>
-      <td>{timestamp.toJSON()}</td>
-    </tr>
-    <tr>
-      <th>now</th>
-      <td>{now.toJSON()}</td>
-    </tr>
-  </table>
-  -->
-
+    <button class="reset-button" on:click={reset}>Reset</button>
+  </div>
 </main>
 
 <style>
-  svg {
+  .clock svg {
+    user-select: none;
+    pointer-events: none;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    user-select: none;
-    pointer-events: none;
   }
 
   main {
     position: relative;
-    height: 16rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 16rem;
-    display: grid;
-    place-content: center;
   }
 
   button {
@@ -176,24 +164,33 @@
     border-radius: 6px;
     background: transparent;
     cursor: pointer;
-    color: #9C5400;
+    color: var(--action);
   }
 
   button::-moz-focus-inner {
     border: 0;
   }
 
+  .clock {
+    width: 12rem;
+    height: 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
   .time {
-    font-family: monospace;
-    font-size: 0.8rem;
-    position: absolute;
-    top: 118%;
+    font-family: "Fira Code", monospace;
+    font-size: 2rem;
+    font-weight: 300;
   }
 
   .start-button {
-    background: #FFC581;
-    height: 8rem;
-    width: 8rem;
+    background-color: var(--action);
+    color: var(--bg);
+    height: 6rem;
+    width: 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -203,8 +200,26 @@
     margin: 0;
   }
 
+  .button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    margin-top: 2rem;
+  }
+
   .start-button:active {
     background: #FAB564;
+  }
+
+  .start-button g {
+    visibility: hidden;
+    fill: var(--bg);
+  }
+
+  .start-button g.visible {
+    visibility: visible;
+    fill: var(--bg);
   }
 
   .reset-button:focus,
@@ -214,19 +229,20 @@
   }
 
   .reset-button {
-    background: #FFC581;
-    height: 4rem;
-    width: 4rem;
-    display: flex;
     align-items: center;
-    justify-content: center;
+    background-color: var(--action);
     border-radius: 50%;
-    transition: background 0.1s;
-    position: absolute;
-    top: 112%;
-    left: 50%;
+    color: var(--bg);
+    display: flex;
+    height: 4rem;
+    justify-content: center;
     margin-left: -2rem;
     text-align: center;
+    transition: background 0.1s;
+    width: 4rem;
+    position: absolute;
+    left: 3rem;
+    top: -2rem;
   }
 
   .reset-button:hover {
@@ -234,9 +250,38 @@
   }
 
   .clock-path {
-    stroke: #FF4D00;
+    stroke: var(--action);
   }
+
   .timer-path {
-    stroke: #FFC581;
+    stroke: var(--accent);
+  }
+
+  .toggle {
+    height: 4rem;
+    width: 8rem;
+    background-color: var(--accent);
+    border-radius: 9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+
+  .toggle span {
+    border-radius: 9rem;
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .toggle .active {
+    background-color: var(--action);
+    color: var(--bg);
   }
 </style>
