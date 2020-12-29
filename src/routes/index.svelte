@@ -9,6 +9,7 @@
   let timestamp = new Date()
   let now = new Date()
   let onBreak = false
+  let appHidden = true
 
   // Start the "now" clock
   setInterval(() => {
@@ -73,6 +74,8 @@
         timestamp = new Date()
         now = new Date()
       }
+
+      appHidden = false
     }
   })
 
@@ -112,12 +115,11 @@
     <svg viewbox="0,0,200,200">
       <circle class="clock-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=4
       transform="rotate(-90 100 100)" stroke-dasharray="616"
-                                      stroke-dashoffset="{616-616 *
-                                      (timeRemaining/currentTotalDuration)}"></circle>
+                                      stroke-dashoffset="{616 - 616 * (timeRemaining/currentTotalDuration)}"></circle>
       <circle class="timer-path" cx=100 cy=100 r=98 stroke="#000" fill=none stroke-width=4
-      transform="rotate(-90 100 100)" stroke-dasharray="616"
-                                      stroke-dashoffset="{-616 *
-                                      (timeRemaining/currentTotalDuration)}"></circle>
+      transform="translate(100 100) rotate(-90) scale(1 -1)
+      translate(-100 -100)" stroke-dasharray="616"
+                                      stroke-dashoffset="{616 * (timeRemaining/currentTotalDuration)}"></circle>
     </svg>
   </div>
 
@@ -286,5 +288,9 @@
   .start-button:hover,
   .reset-button:hover {
     background-color: var(--hover);
+  }
+
+  .appHidden {
+    visibility: hidden;
   }
 </style>
