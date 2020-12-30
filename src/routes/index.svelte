@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte"
 
-  const pomDuration = 25 * 60 * 1000    // 25 min
-  const breakDuration = 5 * 60 * 1000   //  5 min
+  const pomDuration = 25 * 60 * 1000   // 25 min
+  const breakDuration = 5 * 60 * 1000  //  5 min
 
   let duration = pomDuration
   let running = false
@@ -10,6 +10,7 @@
   let now = new Date()
   let onBreak = false
   let appHidden = true
+  let message = ""
 
   // Start the "now" clock
   setInterval(() => {
@@ -24,7 +25,9 @@
   $: timeRemaining = Math.max(0, duration - elapsed)
 
   $: if (timeRemaining <= 0 && running == true) {
-    console.log("DONE")
+    //TIMER DONE
+    message = `${onBreak ? "Break" : "Pom"} complete!`
+    document.querySelector("audio").play()
     reset()
     serialize()
   }
@@ -43,6 +46,7 @@
   }
 
   function startOrStop() {
+    message = ""
     if (!running) {
       //Start new timer
       console.log("Starting")
@@ -109,6 +113,7 @@
   </button>
 
   <div class="clock">
+    <span class="message">{ message }</span>
     <span class="time">
       {millisToMinutesAndSeconds(timeRemaining)}
     </span>
@@ -138,6 +143,8 @@
 
     <button class="reset-button" on:click={reset}>Reset</button>
   </div>
+
+  <audio src="quick.mp3"></audio>
 </main>
 
 <style>
@@ -187,6 +194,15 @@
     font-size: 2rem;
     font-weight: 300;
     user-select: none;
+  }
+
+  .message {
+    font-size: 0.8rem;
+    position: absolute;
+    left: 0;
+    width: 12rem;
+    text-align: center;
+    bottom: 2.6rem;
   }
 
   .start-button,
